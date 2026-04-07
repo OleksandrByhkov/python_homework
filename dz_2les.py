@@ -82,3 +82,5 @@ print(get_number([22, 31, 54, 12, 11, 99, 66]))
 check_even = lambda x: "парне" if x % 2 == 0 else "не парне"
 print(check_even(4))
 print(check_even(7))
+
+#test
