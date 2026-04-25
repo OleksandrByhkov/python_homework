@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Список книг</h1>
+
+    <nav>
+        <a href="/">Головна</a> |
+        <a href="/books">Книги</a> |
+        <a href="/about">Про сайт</a>
+    </nav>
+
+    <ul>
+        {% for book in books %}
+            <li>
+                <strong>{{ book.title }}</strong><br>
+                Автор: {{ book.author }}<br>
+                Категорія: {{ book.category }}
+            </li>
+            <br>
+        {% endfor %}
+    </ul>
+</body>
+</html>
