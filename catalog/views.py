@@ -1,21 +1,88 @@
-from django.db.models import Q, Count
+from django.db.models import Q
+from django.urls import reverse_lazy
+from django.views.generic import (ListView, DetailView, CreateView, UpdateView, DeleteView)
+
 from .models import Book, Category
 
-cheap_books = Book.objects.filter(price__lt=500)
 
-available_books = Book.objects.filter(stock__gt=0)
+class BookListView(ListView):
+    model = Book
+    template_name = "catalog/book_list.html"
+    context_object_name = "books"
+    paginate_by = 5
 
-search_books = Book.objects.filter(
-    Q(author__icontains="Shevchenko") | Q(author__icontains="Franko")
-)
+    def get_queryset(self):
+        queryset = Book.objects.select_related("category").all()
 
-price_and_stock = Book.objects.filter(
-    Q(price__lt=1000) & Q(stock__gt=0)
-)
+        search = self.request.GET.get("search")
+        category = self.request.GET.get("category")
+        available = self.request.GET.get("available")
 
-cat_with_book_count = Category.objects.annotate(
-    books_count=Count("books")
-)
+        if search:
+            queryset = queryset.filter(
+                Q(title__icontains=search) |
+                Q(author__icontains=search) |
+                Q(description__icontains=search)
+            )
 
-for category in cat_with_book_count:
-    print(category.name, category.books_count)
+        if category:
+            queryset = queryset.filter(category_id=category)
+
+        if available == "on":
+            queryset = queryset.filter(stock__gt=0)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["categories"] = Category.objects.all()
+        context["search"] = self.request.GET.get("search", "")
+        context["selected_category"] = self.request.GET.get("category", "")
+        context["available"] = self.request.GET.get("available", "")
+
+        return context
+
+
+class BookDetailView(DetailView):
+    model = Book
+    template_name = "catalog/book_detail.html"
+    context_object_name = "book"
+
+
+class BookCreateView(CreateView):
+    model = Book
+    template_name = "catalog/book_form.html"
+
+    fields = [
+        "category",
+        "title",
+        "author",
+        "price",
+        "description",
+        "stock"
+    ]
+
+    success_url = reverse_lazy("catalog:book_list")
+
+
+class BookUpdateView(UpdateView):
+    model = Book
+    template_name = "catalog/book_form.html"
+
+    fields = [
+        "category",
+        "title",
+        "author",
+        "price",
+        "description",
+        "stock"
+    ]
+
+    success_url = reverse_lazy("catalog:book_list")
+
+class BookDeleteView(DeleteView):
+    model = Book
+    template_name = "catalog/book_confirm_delete.html"
+
+    success_url = reverse_lazy("catalog:book_list")

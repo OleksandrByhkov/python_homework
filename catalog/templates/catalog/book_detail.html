@@ -1,0 +1,20 @@
+{% extends "catalog/base.html" %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+
+<h1>{{ book.title }}</h1>
+
+<p><strong>Автор:</strong> {{ book.author }}</p>
+<p><strong>Категорія:</strong> {{ book.category.name }}</p>
+<p><strong>Ціна:</strong> {{ book.price }} грн</p>
+<p><strong>На складі:</strong> {{ book.stock }}</p>
+<p><strong>Опис:</strong></p>
+<p>{{ book.description }}</p>
+
+<a href="{% url 'catalog:book_update' book.pk %}" class="btn btn-warning">Редагувати</a>
+<a href="{% url 'catalog:book_delete' book.pk %}" class="btn btn-danger">Видалити</a>
+<a href="{% url 'catalog:book_list' %}" class="btn btn-secondary">Назад</a>
+
+{% endblock %}

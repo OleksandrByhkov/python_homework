@@ -1,0 +1,20 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'catalog:book_list' %}">
+            Книжковий магазин
+        </a>
+
+        <div class="navbar-nav">
+            <a class="nav-link" href="{% url 'catalog:book_list' %}">Книги</a>
+            <a class="nav-link" href="{% url 'catalog:book_create' %}">Додати книгу</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    {% block content %}
+    {% endblock %}
+</div>
+
+</body>
+</html>
