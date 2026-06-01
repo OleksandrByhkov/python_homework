@@ -1,0 +1,31 @@
+Watching for file changes with StatReloader
+C:\Users\MSI\PycharmProjects\PythonProject1\bookstore\catalog\admin.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\MSI\PycharmProjects\PythonProject1\bookstore\bookstore\urls.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Path: / | Method: GET | Time: 0.440s
+"GET / HTTP/1.1" 200 194
+Path: /favicon.ico | Method: GET | Time: 0.008s
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 17674
+Path: /accounts/login/ | Method: GET | Time: 0.002s
+"GET /accounts/login/ HTTP/1.1" 200 194
+Path: /accounts/register/ | Method: GET | Time: 0.001s
+"GET /accounts/register/ HTTP/1.1" 200 194
+Path: /accounts/login/ | Method: GET | Time: 0.001s
+"GET /accounts/login/ HTTP/1.1" 200 194
+Watching for file changes with StatReloader
+Path: / | Method: GET | Time: 0.099s
+"GET / HTTP/1.1" 200 194
+Path: /accounts/login/ | Method: GET | Time: 0.003s
+"GET /accounts/login/ HTTP/1.1" 200 194
+Watching for file changes with StatReloader
+Path: / | Method: GET | Time: 0.104s
+"GET / HTTP/1.1" 200 15792
+"GET /static/debug_toolbar/css/toolbar.css HTTP/1.1" 200 30587
+"GET /static/catalog/css/style.css HTTP/1.1" 200 127
+"GET /static/debug_toolbar/js/toolbar.js HTTP/1.1" 200 14879
+"GET /static/debug_toolbar/css/print.css HTTP/1.1" 200 43
+"GET /static/debug_toolbar/js/utils.js HTTP/1.1" 200 4700

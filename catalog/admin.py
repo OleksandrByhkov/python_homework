@@ -13,7 +13,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ['title', 'author', 'price', 'stock', 'category']
-    list_filter = ['category', 'created']
-    search_fields = ['title', 'author', 'description']
-    list_editable = ['price', 'stock']
+    list_display = ("title", "author", "category", "price", "stock")
+    list_filter = ("category", "author")
+    search_fields = ("title", "author", "description")
+    list_editable = ("price", "stock")

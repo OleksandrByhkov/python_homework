@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import (ListView, DetailView, CreateView, UpdateView, DeleteView)
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 from .models import Book, Category
 
@@ -50,39 +51,24 @@ class BookDetailView(DetailView):
     context_object_name = "book"
 
 
-class BookCreateView(CreateView):
+class BookCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Book
     template_name = "catalog/book_form.html"
-
-    fields = [
-        "category",
-        "title",
-        "author",
-        "price",
-        "description",
-        "stock"
-    ]
-
+    fields = ["category", "title", "author", "price", "description", "stock"]
     success_url = reverse_lazy("catalog:book_list")
+    permission_required = "catalog.can_manage_books"
 
 
-class BookUpdateView(UpdateView):
+class BookUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Book
     template_name = "catalog/book_form.html"
-
-    fields = [
-        "category",
-        "title",
-        "author",
-        "price",
-        "description",
-        "stock"
-    ]
-
+    fields = ["category", "title", "author", "price", "description", "stock"]
     success_url = reverse_lazy("catalog:book_list")
+    permission_required = "catalog.can_manage_books"
 
-class BookDeleteView(DeleteView):
+
+class BookDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Book
     template_name = "catalog/book_confirm_delete.html"
-
     success_url = reverse_lazy("catalog:book_list")
+    permission_required = "catalog.can_manage_books"

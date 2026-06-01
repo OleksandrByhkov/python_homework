@@ -12,13 +12,22 @@ class Category(models.Model):
         return self.name
 
 class Book(models.Model):
-    category = models.ForeignKey(Category, related_name='books', on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)
-    author = models.CharField(max_length=255)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    description = models.TextField(blank=True)
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE,
+        related_name="books"
+    )
+    title = models.CharField(max_length=200)
+    author = models.CharField(max_length=150)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+    description = models.TextField()
     stock = models.PositiveIntegerField(default=0)
-    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["title"]
+        permissions = [
+            ("can_manage_books", "Can manage books"),
+        ]
 
     def __str__(self):
-        return self.title
+        return f"{self.title} — {self.author}"
