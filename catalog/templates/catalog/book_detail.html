@@ -17,4 +17,15 @@
 <a href="{% url 'catalog:book_delete' book.pk %}" class="btn btn-danger">Видалити</a>
 <a href="{% url 'catalog:book_list' %}" class="btn btn-secondary">Назад</a>
 
+<form action="{% url 'catalog:cart_add' book.id %}" method="post" class="mb-3">
+    {% csrf_token %}
+
+    <label for="quantity">Кількість:</label>
+    <input type="number" name="quantity" id="quantity" value="1" min="1" class="form-control w-25 mb-2">
+
+    <button type="submit" class="btn btn-success">
+        Додати в кошик
+    </button>
+</form>
+
 {% endblock %}

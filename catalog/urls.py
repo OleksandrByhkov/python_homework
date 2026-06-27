@@ -6,6 +6,8 @@ from .views import (
     BookUpdateView,
     BookDeleteView,
 )
+from .views import cart_add, cart_remove, cart_detail
+from .views import order_create, payment_success, payment_cancel
 
 app_name = "catalog"
 
@@ -15,4 +17,10 @@ urlpatterns = [
     path("books/create/", BookCreateView.as_view(), name="book_create"),
     path("books/<int:pk>/edit/", BookUpdateView.as_view(), name="book_update"),
     path("books/<int:pk>/delete/", BookDeleteView.as_view(), name="book_delete"),
+    path("cart/", cart_detail, name="cart_detail"),
+    path("cart/add/<int:book_id>/", cart_add, name="cart_add"),
+    path("cart/remove/<int:book_id>/", cart_remove, name="cart_remove"),
+    path("order/create/", order_create, name="order_create"),
+    path("payment/success/", payment_success, name="payment_success"),
+    path("payment/cancel/", payment_cancel, name="payment_cancel"),
 ]

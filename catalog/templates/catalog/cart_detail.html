@@ -1,0 +1,50 @@
+{% extends "catalog/base.html" %}
+
+{% block title %}Кошик{% endblock %}
+
+{% block content %}
+<h1>Кошик</h1>
+
+{% if cart|length > 0 %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Книга</th>
+                <th>Кількість</th>
+                <th>Ціна</th>
+                <th>Сума</th>
+                <th>Дія</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart %}
+                <tr>
+                    <td>{{ item.book.title }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.price }} грн</td>
+                    <td>{{ item.total_price }} грн</td>
+                    <td>
+                        <form action="{% url 'catalog:cart_remove' item.book.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                Видалити
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h4>Загальна сума: {{ cart.get_total_price }} грн</h4>
+    <a href="{% url 'catalog:order_create' %}" class="btn btn-success">
+        Оформити замовлення
+    </a>
+{% else %}
+    <p>Кошик порожній.</p>
+{% endif %}
+
+<a href="{% url 'catalog:book_list' %}" class="btn btn-secondary">
+    Продовжити покупки
+</a>
+{% endblock %}
