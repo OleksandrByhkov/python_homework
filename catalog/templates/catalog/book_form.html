@@ -1,0 +1,18 @@
+{% extends "catalog/base.html" %}
+
+{% block title %}Форма книги{% endblock %}
+
+{% block content %}
+
+<h1>Форма книги</h1>
+
+<form method="post">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit" class="btn btn-success">Зберегти</button>
+    <a href="{% url 'catalog:book_list' %}" class="btn btn-secondary">Скасувати</a>
+</form>
+
+{% endblock %}

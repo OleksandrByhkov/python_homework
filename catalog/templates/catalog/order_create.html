@@ -1,0 +1,30 @@
+{% extends "catalog/base.html" %}
+
+{% block title %}Оформлення замовлення{% endblock %}
+
+{% block content %}
+<h1>Оформлення замовлення</h1>
+
+<h3>Ваш кошик</h3>
+
+<ul>
+    {% for item in cart %}
+        <li>
+            {{ item.book.title }} x {{ item.quantity }} —
+            {{ item.total_price }} грн
+        </li>
+    {% endfor %}
+</ul>
+
+<h4>Загальна сума: {{ cart.get_total_price }} грн</h4>
+
+<form method="post">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit" class="btn btn-success">
+        Перейти до оплати
+    </button>
+</form>
+{% endblock %}

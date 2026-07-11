@@ -1,0 +1,6 @@
+Django
+psycopg2-binary
+redis
+python-dotenv
+django-debug-toolbar
+stripe

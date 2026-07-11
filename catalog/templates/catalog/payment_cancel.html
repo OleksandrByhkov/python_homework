@@ -1,0 +1,13 @@
+{% extends "catalog/base.html" %}
+
+{% block title %}Оплату скасовано{% endblock %}
+
+{% block content %}
+<h1>Оплату скасовано</h1>
+
+<p>Ви скасували оплату.</p>
+
+<a href="{% url 'catalog:cart_detail' %}" class="btn btn-secondary">
+    Повернутися до кошика
+</a>
+{% endblock %}
