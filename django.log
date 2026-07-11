@@ -1,0 +1,210 @@
+Watching for file changes with StatReloader
+C:\Users\MSI\PycharmProjects\PythonProject1\bookstore\catalog\admin.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\MSI\PycharmProjects\PythonProject1\bookstore\bookstore\urls.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Path: / | Method: GET | Time: 0.440s
+"GET / HTTP/1.1" 200 194
+Path: /favicon.ico | Method: GET | Time: 0.008s
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 17674
+Path: /accounts/login/ | Method: GET | Time: 0.002s
+"GET /accounts/login/ HTTP/1.1" 200 194
+Path: /accounts/register/ | Method: GET | Time: 0.001s
+"GET /accounts/register/ HTTP/1.1" 200 194
+Path: /accounts/login/ | Method: GET | Time: 0.001s
+"GET /accounts/login/ HTTP/1.1" 200 194
+Watching for file changes with StatReloader
+Path: / | Method: GET | Time: 0.099s
+"GET / HTTP/1.1" 200 194
+Path: /accounts/login/ | Method: GET | Time: 0.003s
+"GET /accounts/login/ HTTP/1.1" 200 194
+Watching for file changes with StatReloader
+Path: / | Method: GET | Time: 0.104s
+"GET / HTTP/1.1" 200 15792
+"GET /static/debug_toolbar/css/toolbar.css HTTP/1.1" 200 30587
+"GET /static/catalog/css/style.css HTTP/1.1" 200 127
+"GET /static/debug_toolbar/js/toolbar.js HTTP/1.1" 200 14879
+"GET /static/debug_toolbar/css/print.css HTTP/1.1" 200 43
+"GET /static/debug_toolbar/js/utils.js HTTP/1.1" 200 4700
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Path: / | Method: GET | Time: 0.056s
+"GET / HTTP/1.1" 200 1960
+"GET /static/catalog/css/style.css HTTP/1.1" 200 127
+Path: /favicon.ico | Method: GET | Time: 0.006s
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 3867
+Path: /accounts/login/ | Method: GET | Time: 0.038s
+"GET /accounts/login/ HTTP/1.1" 200 1584
+Path: /accounts/register/ | Method: GET | Time: 0.032s
+"GET /accounts/register/ HTTP/1.1" 200 2836
+Path: /accounts/login/ | Method: GET | Time: 0.003s
+"GET /accounts/login/ HTTP/1.1" 200 1584
+Watching for file changes with StatReloader
+/app/bookstore/settings.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Path: /admin/ | Method: GET | Time: 0.004s
+"GET /admin/ HTTP/1.1" 302 0
+Path: /admin/login/ | Method: GET | Time: 0.072s
+"GET /admin/login/?next=/admin/ HTTP/1.1" 200 4080
+"GET /static/admin/css/base.css HTTP/1.1" 200 23100
+"GET /static/admin/css/dark_mode.css HTTP/1.1" 200 3538
+"GET /static/admin/css/login.css HTTP/1.1" 200 951
+"GET /static/admin/css/responsive.css HTTP/1.1" 200 16273
+"GET /static/admin/js/theme.js HTTP/1.1" 200 1653
+"GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2810
+"GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+Path: /admin/login/ | Method: POST | Time: 0.240s
+"POST /admin/login/?next=/admin/ HTTP/1.1" 200 4247
+Path: /admin/login/ | Method: POST | Time: 0.261s
+"POST /admin/login/?next=/admin/ HTTP/1.1" 200 4248
+Watching for file changes with StatReloader
+/app/catalog/views.py changed, reloading.
+Watching for file changes with StatReloader
+/app/catalog/views.py changed, reloading.
+Watching for file changes with StatReloader
+/app/catalog/urls.py changed, reloading.
+Watching for file changes with StatReloader
+/app/catalog/urls.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Path: / | Method: GET | Time: 0.051s
+"GET / HTTP/1.1" 200 2097
+"GET /static/catalog/css/style.css HTTP/1.1" 200 127
+Path: /favicon.ico | Method: GET | Time: 0.004s
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 4689
+Path: /books/create/ | Method: GET | Time: 0.000s
+"GET /books/create/ HTTP/1.1" 302 0
+Path: /accounts/login/ | Method: GET | Time: 0.053s
+"GET /accounts/login/?next=/books/create/ HTTP/1.1" 200 1721
+Path: /accounts/register/ | Method: GET | Time: 0.039s
+"GET /accounts/register/ HTTP/1.1" 200 2973
+Path: /accounts/register/ | Method: POST | Time: 0.037s
+"POST /accounts/register/ HTTP/1.1" 200 3355
+Path: /accounts/register/ | Method: POST | Time: 0.013s
+"POST /accounts/register/ HTTP/1.1" 200 3217
+Path: /accounts/register/ | Method: POST | Time: 0.015s
+"POST /accounts/register/ HTTP/1.1" 200 3214
+Path: /cart/ | Method: GET | Time: 0.007s
+"GET /cart/ HTTP/1.1" 200 1165
+Path: / | Method: GET | Time: 0.011s
+"GET / HTTP/1.1" 200 2097
+Path: /books/create/ | Method: GET | Time: 0.007s
+"GET /books/create/ HTTP/1.1" 302 0
+Path: /accounts/login/ | Method: GET | Time: 0.009s
+"GET /accounts/login/?next=/books/create/ HTTP/1.1" 200 1721
+Path: /accounts/login/ | Method: POST | Time: 0.160s
+"POST /accounts/login/?next=/books/create/ HTTP/1.1" 200 1877
+Path: /accounts/login/ | Method: POST | Time: 0.175s
+"POST /accounts/login/?next=/books/create/ HTTP/1.1" 302 0
+Path: /books/create/ | Method: GET | Time: 0.079s
+"GET /books/create/ HTTP/1.1" 200 2549
+Path: / | Method: GET | Time: 0.009s
+"GET / HTTP/1.1" 200 2332
+Path: /admin/ | Method: GET | Time: 0.077s
+"GET /admin/ HTTP/1.1" 200 7701
+"GET /static/admin/css/base.css HTTP/1.1" 200 23100
+"GET /static/admin/css/dark_mode.css HTTP/1.1" 200 3538
+"GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2810
+"GET /static/admin/js/theme.js HTTP/1.1" 200 1653
+"GET /static/admin/css/responsive.css HTTP/1.1" 200 16273
+"GET /static/admin/css/dashboard.css HTTP/1.1" 200 441
+"GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+"GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 593
+"GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 978
+Path: /admin/catalog/category/add/ | Method: GET | Time: 0.054s
+"GET /admin/catalog/category/add/ HTTP/1.1" 200 15356
+"GET /static/admin/css/forms.css HTTP/1.1" 200 8831
+"GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 200 285314
+"GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+"GET /static/admin/js/core.js HTTP/1.1" 200 6208
+"GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 200 9777
+"GET /static/admin/js/actions.js HTTP/1.1" 200 8077
+"GET /static/admin/js/inlines.js HTTP/1.1" 200 15628
+Path: /admin/jsi18n/ | Method: GET | Time: 0.014s
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+"GET /static/admin/js/prepopulate_init.js HTTP/1.1" 200 586
+"GET /static/admin/js/urlify.js HTTP/1.1" 200 7887
+"GET /static/admin/css/widgets.css HTTP/1.1" 200 11811
+"GET /static/admin/js/prepopulate.js HTTP/1.1" 200 1531
+"GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 200 325171
+"GET /static/admin/js/change_form.js HTTP/1.1" 200 606
+"GET /static/admin/img/inline-delete.svg HTTP/1.1" 200 651
+Path: /admin/catalog/category/add/ | Method: POST | Time: 0.019s
+"POST /admin/catalog/category/add/ HTTP/1.1" 302 0
+Path: /admin/catalog/category/ | Method: GET | Time: 0.057s
+"GET /admin/catalog/category/ HTTP/1.1" 200 10560
+"GET /static/admin/css/changelists.css HTTP/1.1" 200 7498
+Path: /admin/jsi18n/ | Method: GET | Time: 0.009s
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+"GET /static/admin/js/filters.js HTTP/1.1" 200 978
+"GET /static/admin/img/icon-yes-dark.svg HTTP/1.1" 200 558
+"GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 593
+Path: /admin/catalog/category/add/ | Method: GET | Time: 0.017s
+"GET /admin/catalog/category/add/ HTTP/1.1" 200 15356
+Path: /admin/jsi18n/ | Method: GET | Time: 0.009s
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+Path: /admin/catalog/category/add/ | Method: POST | Time: 0.017s
+"POST /admin/catalog/category/add/ HTTP/1.1" 302 0
+Path: /admin/catalog/category/ | Method: GET | Time: 0.014s
+"GET /admin/catalog/category/ HTTP/1.1" 200 10868
+Path: /admin/jsi18n/ | Method: GET | Time: 0.008s
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+Path: /admin/catalog/category/add/ | Method: GET | Time: 0.019s
+"GET /admin/catalog/category/add/ HTTP/1.1" 200 15356
+Path: /admin/jsi18n/ | Method: GET | Time: 0.009s
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+Path: /admin/catalog/category/add/ | Method: POST | Time: 0.016s
+"POST /admin/catalog/category/add/ HTTP/1.1" 302 0
+Path: /admin/catalog/category/ | Method: GET | Time: 0.013s
+"GET /admin/catalog/category/ HTTP/1.1" 200 11164
+Path: /admin/jsi18n/ | Method: GET | Time: 0.009s
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+Path: / | Method: GET | Time: 0.012s
+"GET / HTTP/1.1" 200 2703
+Path: /books/create/ | Method: GET | Time: 0.012s
+"GET /books/create/ HTTP/1.1" 200 2665
+Path: /books/create/ | Method: POST | Time: 0.017s
+"POST /books/create/ HTTP/1.1" 302 0
+Path: / | Method: GET | Time: 0.012s
+"GET / HTTP/1.1" 200 3702
+Path: /books/1/ | Method: GET | Time: 0.020s
+"GET /books/1/ HTTP/1.1" 200 2159
+Path: /cart/add/1/ | Method: POST | Time: 0.009s
+"POST /cart/add/1/ HTTP/1.1" 302 0
+Path: /cart/ | Method: GET | Time: 0.011s
+"GET /cart/ HTTP/1.1" 200 2439
+Path: / | Method: GET | Time: 0.011s
+"GET / HTTP/1.1" 200 3702
+Path: /books/1/ | Method: GET | Time: 0.011s
+"GET /books/1/ HTTP/1.1" 200 2159
+Path: /cart/add/1/ | Method: POST | Time: 0.009s
+"POST /cart/add/1/ HTTP/1.1" 302 0
+Path: /cart/ | Method: GET | Time: 0.010s
+"GET /cart/ HTTP/1.1" 200 2439
+/app/catalog/views.py changed, reloading.
+Watching for file changes with StatReloader
+/app/catalog/views.py changed, reloading.
+Watching for file changes with StatReloader
+/app/bookstore/settings.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Path: / | Method: GET | Time: 0.059s
+"GET / HTTP/1.1" 200 3702
+Path: /books/1/ | Method: GET | Time: 0.018s
+"GET /books/1/ HTTP/1.1" 200 2159
+Path: /cart/add/1/ | Method: POST | Time: 0.008s
+"POST /cart/add/1/ HTTP/1.1" 302 0
+Path: /cart/ | Method: GET | Time: 0.017s
+"GET /cart/ HTTP/1.1" 200 2547
+Path: /order/create/ | Method: GET | Time: 0.041s
+"GET /order/create/ HTTP/1.1" 200 2406
+Path: / | Method: GET | Time: 0.010s
+"GET / HTTP/1.1" 200 3702
