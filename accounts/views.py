@@ -7,6 +7,8 @@ from .forms import RegisterForm
 
 
 class RegisterView(CreateView):
+    """Register a new user and automatically log them in."""
+
     form_class = RegisterForm
     template_name = "accounts/register.html"
     success_url = reverse_lazy("catalog:book_list")
@@ -18,8 +20,12 @@ class RegisterView(CreateView):
 
 
 class CustomLoginView(LoginView):
+    """Authenticate a user using the custom login template."""
+
     template_name = "accounts/login.html"
 
 
 class CustomLogoutView(LogoutView):
+    """Log out the currently authenticated user."""
+
     pass

@@ -2,6 +2,7 @@ from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import (ListView, DetailView, CreateView, UpdateView, DeleteView)
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.http import Http404, JsonResponse
 
 from .models import Book, Category
 from django.shortcuts import redirect, get_object_or_404, render
@@ -23,23 +24,24 @@ from .models import OrderItem
 
 
 class BookListView(ListView):
+    """Display a paginated list of books with search and filtering."""
     model = Book
     template_name = "catalog/book_list.html"
     context_object_name = "books"
     paginate_by = 5
 
     def get_queryset(self):
-        queryset = Book.objects.select_related("category").all()
+        queryset = Book.objects.select_related("category")
 
-        search = self.request.GET.get("search")
+        search = self.request.GET.get("search", "").strip()
         category = self.request.GET.get("category")
         available = self.request.GET.get("available")
 
         if search:
             queryset = queryset.filter(
-                Q(title__icontains=search) |
-                Q(author__icontains=search) |
-                Q(description__icontains=search)
+                Q(title__icontains=search)
+                | Q(author__icontains=search)
+                | Q(description__icontains=search)
             )
 
         if category:
@@ -62,12 +64,15 @@ class BookListView(ListView):
 
 
 class BookDetailView(DetailView):
+    """Display detailed information about a single book."""
+    
     model = Book
     template_name = "catalog/book_detail.html"
     context_object_name = "book"
 
 
 class BookCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    """Allow authorized users to create a new book."""
     model = Book
     template_name = "catalog/book_form.html"
     fields = ["category", "title", "author", "price", "description", "stock"]
@@ -76,6 +81,7 @@ class BookCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
 
 class BookUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    """Allow authorized users to update an existing book."""
     model = Book
     template_name = "catalog/book_form.html"
     fields = ["category", "title", "author", "price", "description", "stock"]
@@ -84,6 +90,7 @@ class BookUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
 
 
 class BookDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    """Allow authorized users to delete an existing book."""
     model = Book
     template_name = "catalog/book_confirm_delete.html"
     success_url = reverse_lazy("catalog:book_list")
@@ -91,6 +98,7 @@ class BookDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 
 @require_POST
 def cart_add(request, book_id):
+    """Add the selected book and quantity to the shopping cart."""
     cart = Cart(request)
     book = get_object_or_404(Book, id=book_id)
 
@@ -103,6 +111,7 @@ def cart_add(request, book_id):
 
 @require_POST
 def cart_remove(request, book_id):
+    """Remove the selected book from the shopping cart."""
     cart = Cart(request)
     book = get_object_or_404(Book, id=book_id)
 
@@ -112,6 +121,7 @@ def cart_remove(request, book_id):
 
 
 def cart_detail(request):
+    """Display the contents of the current shopping cart."""
     cart = Cart(request)
 
     return render(request, "catalog/cart_detail.html", {
@@ -119,6 +129,13 @@ def cart_detail(request):
     })
 
 def order_create(request):
+    """
+    Create an order from the current shopping cart.
+
+    Validate customer data, create the order and its items,
+    send a confirmation email, create a Stripe Checkout Session,
+    and clear the shopping cart.
+    """
     cart = Cart(request)
 
     if len(cart) == 0:
@@ -136,76 +153,89 @@ def order_create(request):
 
                 order.save()
 
+                order_items = []
+
                 for item in cart:
-                    OrderItem.objects.create(
-                        order=order,
-                        book=item["book"],
-                        price=item["price"],
-                        quantity=item["quantity"],
+                    order_items.append(
+                        OrderItem(
+                            order=order,
+                            book=item["book"],
+                            price=item["price"],
+                            quantity=item["quantity"],
+                        )
                     )
 
-                send_mail(
-                    subject=f"Замовлення #{order.id} створено",
-                    message=f"Ваше замовлення #{order.id} успішно створено.",
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[order.email],
-                    fail_silently=True,
-                )
+                OrderItem.objects.bulk_create(order_items)
 
-                stripe.api_key = settings.STRIPE_SECRET_KEY
+            send_mail(
+                subject=f"Замовлення #{order.id} створено",
+                message=f"Ваше замовлення #{order.id} успішно створено.",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[order.email],
+                fail_silently=True,
+            )
 
-                checkout_session = stripe.checkout.Session.create(
-                    payment_method_types=["card"],
-                    mode="payment",
-                    customer_email=order.email,
-                    line_items=[
-                        {
-                            "price_data": {
-                                "currency": "uah",
-                                "product_data": {
-                                    "name": item["book"].title,
-                                },
-                                "unit_amount": int(item["price"] * 100),
+            stripe.api_key = settings.STRIPE_SECRET_KEY
+
+            checkout_session = stripe.checkout.Session.create(
+                payment_method_types=["card"],
+                mode="payment",
+                customer_email=order.email,
+                line_items=[
+                    {
+                        "price_data": {
+                            "currency": "uah",
+                            "product_data": {
+                                "name": item["book"].title,
                             },
-                            "quantity": item["quantity"],
-                        }
-                        for item in cart
-                    ],
-                    success_url=request.build_absolute_uri(
-                        reverse("catalog:payment_success")
-                    ),
-                    cancel_url=request.build_absolute_uri(
-                        reverse("catalog:payment_cancel")
-                    ),
-                    metadata={
-                        "order_id": order.id,
-                    },
-                )
+                            "unit_amount": int(item["price"] * 100),
+                        },
+                        "quantity": item["quantity"],
+                    }
+                    for item in cart
+                ],
+                success_url=request.build_absolute_uri(
+                    reverse("catalog:payment_success")
+                ),
+                cancel_url=request.build_absolute_uri(
+                    reverse("catalog:payment_cancel")
+                ),
+                metadata={
+                    "order_id": order.id,
+                },
+            )
 
-                order.stripe_session_id = checkout_session.id
-                order.save()
+            order.stripe_session_id = checkout_session.id
+            order.save(update_fields=["stripe_session_id"])
 
-                cart.clear()
+            cart.clear()
 
-                return redirect(checkout_session.url)
+            return redirect(checkout_session.url)
 
     else:
         form = OrderCreateForm()
 
-    return render(request, "catalog/order_create.html", {
-        "cart": cart,
-        "form": form,
-    })
+    return render(
+        request,
+        "catalog/order_create.html",
+        {
+            "cart": cart,
+            "form": form,
+        },
+    )
 
 
 def payment_success(request):
+    """Display the successful payment page."""
     return render(request, "catalog/payment_success.html")
 
 
 def payment_cancel(request):
+    """Display the cancelled payment page."""
     return render(request, "catalog/payment_cancel.html")
 
 class AsyncBookListView(View):
+    """Asynchronously retrieve and display all books."""
     async def get(self, request):
         books = []
 
@@ -220,8 +250,12 @@ class AsyncBookListView(View):
 
 
 class AsyncBookDetailView(View):
+    """Display book details using an asynchronous database query."""
     async def get(self, request, pk):
-        book = await Book.objects.select_related("category").aget(pk=pk)
+        try:
+            book = await Book.objects.select_related("category").aget(pk=pk)
+        except Book.DoesNotExist as exc:
+            raise Http404("Book not found") from exc
 
         return render(
             request,
@@ -231,6 +265,7 @@ class AsyncBookDetailView(View):
 
 
 class AsyncBookStatsView(View):
+    """Return asynchronous book and category statistics as JSON."""
     async def get(self, request):
         books_count = await Book.objects.acount()
         categories_count = await Category.objects.acount()
