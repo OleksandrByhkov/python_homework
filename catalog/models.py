@@ -28,6 +28,12 @@ class Book(models.Model):
     class Meta:
         verbose_name = _("Book")
         verbose_name_plural = _("Books")
+        permissions = [
+            (
+                "can_manage_books",
+                "Can create, update and delete books",
+            ),
+        ]
 
     def __str__(self):
         return self.title

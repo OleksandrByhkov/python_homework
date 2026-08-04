@@ -8,6 +8,12 @@ from .views import (
     AsyncBookListView,
     AsyncBookDetailView,
     AsyncBookStatsView,
+    cart_add,
+    cart_remove,
+    cart_detail,
+    order_create,
+    payment_success,
+    payment_cancel,
 )
 from .views import cart_add, cart_remove, cart_detail
 from .views import order_create, payment_success, payment_cancel

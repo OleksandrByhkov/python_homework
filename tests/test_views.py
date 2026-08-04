@@ -1,7 +1,9 @@
 import pytest
+from django.core.cache import cache
 from django.urls import reverse
 
 from tests.factories import BookFactory
+
 
 
 pytestmark = pytest.mark.django_db
@@ -57,3 +59,9 @@ def test_book_detail_view_returns_404_for_unknown_book(client):
     response = client.get(url)
 
     assert response.status_code == 404
+
+@pytest.fixture(autouse=True)
+def clear_cache():
+    cache.clear()
+    yield
+    cache.clear()

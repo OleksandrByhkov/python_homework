@@ -1,5 +1,6 @@
 {% extends "catalog/base.html" %}
 {% load i18n %}
+{% load cache %}
 
 {% block title %}Список книг{% endblock %}
 
@@ -7,7 +8,11 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1>Список книг</h1>
-    <a href="{% url 'catalog:book_create' %}" class="btn btn-primary">Додати книгу</a>
+    {% if perms.catalog.can_manage_books %}
+    <a href="{% url 'catalog:book_create' %}" class="btn btn-primary">
+        Додати книгу
+    </a>
+{% endif %}
 </div>
 
 <form method="get" class="row g-3 mb-4">
@@ -41,35 +46,50 @@
     </div>
 </form>
 
-{% if books %}
-    <div class="row">
-        {% for book in books %}
-            <div class="col-md-6 mb-3">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ book.title }}</h5>
-                        <p class="card-text">Автор: {{ book.author }}</p>
-                        <p class="card-text">Категорія: {{ book.category.name }}</p>
-                        <p class="card-text">Ціна: {{ book.price }} грн</p>
-                        <p class="card-text">На складі: {{ book.stock }}</p>
+{% cache 60 book_list_fragment request.GET.urlencode LANGUAGE_CODE %}
+    {% if books %}
+        <div class="row">
+            {% for book in books %}
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ book.title }}</h5>
+                            <p class="card-text">Автор: {{ book.author }}</p>
+                            <p class="card-text">
+                                Категорія: {{ book.category.name }}
+                            </p>
+                            <p class="card-text">Ціна: {{ book.price }} грн</p>
+                            <p class="card-text">На складі: {{ book.stock }}</p>
 
-                        <a href="{% url 'catalog:book_detail' book.pk %}" class="btn btn-info">
-                            Детальніше
-                        </a>
-                        <a href="{% url 'catalog:book_update' book.pk %}" class="btn btn-warning">
-                            Редагувати
-                        </a>
-                        <a href="{% url 'catalog:book_delete' book.pk %}" class="btn btn-danger">
-                            Видалити
-                        </a>
+                            <a
+                                href="{% url 'catalog:book_detail' book.pk %}"
+                                class="btn btn-info"
+                            >
+                                Детальніше
+                            </a>
+
+                            <a
+                                href="{% url 'catalog:book_update' book.pk %}"
+                                class="btn btn-warning"
+                            >
+                                Редагувати
+                            </a>
+
+                            <a
+                                href="{% url 'catalog:book_delete' book.pk %}"
+                                class="btn btn-danger"
+                            >
+                                Видалити
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
-{% else %}
-    <p>Книг не знайдено.</p>
-{% endif %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Книг не знайдено.</p>
+    {% endif %}
+{% endcache %}
 
 {% if is_paginated %}
 <nav>

@@ -2,10 +2,9 @@ from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import (ListView, DetailView, CreateView, UpdateView, DeleteView)
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.http import Http404, JsonResponse
 
 from .models import Book, Category
-from django.shortcuts import redirect, get_object_or_404, render
+from django.shortcuts import redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from .cart import Cart
 from django.http import JsonResponse
@@ -15,14 +14,21 @@ from django.views import View
 import stripe
 
 from django.conf import settings
-from django.core.mail import send_mail
+from .tasks import send_order_confirmation_email
 from django.db import transaction
 from django.urls import reverse
 from .forms import OrderCreateForm
 from .models import OrderItem
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
+from django.http import Http404
 
-
+@method_decorator(
+    cache_page(settings.BOOK_LIST_CACHE_TIMEOUT),
+    name="dispatch",
+)
 class BookListView(ListView):
     """Display a paginated list of books with search and filtering."""
     model = Book
@@ -64,11 +70,35 @@ class BookListView(ListView):
 
 
 class BookDetailView(DetailView):
-    """Display detailed information about a single book."""
-    
+    """Display book details using the low-level Redis cache API."""
+
     model = Book
     template_name = "catalog/book_detail.html"
     context_object_name = "book"
+
+    def get_object(self, queryset=None):
+        book_id = self.kwargs["pk"]
+        cache_key = f"book_detail:{book_id}"
+
+        book = cache.get(cache_key)
+
+        if book is None:
+            try:
+                book = (
+                    Book.objects
+                    .select_related("category")
+                    .get(pk=book_id)
+                )
+            except Book.DoesNotExist as exc:
+                raise Http404("Book not found") from exc
+
+            cache.set(
+                cache_key,
+                book,
+                timeout=settings.BOOK_DETAIL_CACHE_TIMEOUT,
+            )
+
+        return book
 
 
 class BookCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
@@ -167,13 +197,7 @@ def order_create(request):
 
                 OrderItem.objects.bulk_create(order_items)
 
-            send_mail(
-                subject=f"Замовлення #{order.id} створено",
-                message=f"Ваше замовлення #{order.id} успішно створено.",
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[order.email],
-                fail_silently=True,
-            )
+            transaction.on_commit(lambda: send_order_confirmation_email.delay(order.id))
 
             stripe.api_key = settings.STRIPE_SECRET_KEY
 

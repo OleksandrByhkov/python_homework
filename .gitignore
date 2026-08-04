@@ -8,3 +8,7 @@ htmlcov/
 django.log
 .env
 test_db.sqlite3
+staticfiles/
+reports/
+celerybeat-schedule
+celerybeat-schedule.*

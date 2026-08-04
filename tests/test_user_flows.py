@@ -239,6 +239,7 @@ def test_user_can_open_order_form_with_cart_item(client):
     ]
     assert book.title in response.content.decode("utf-8")
 
+@pytest.mark.django_db(transaction=True)
 def test_user_can_create_order_with_mocked_stripe_and_email(
     client,
     mocker,
@@ -257,9 +258,8 @@ def test_user_can_create_order_with_mocked_stripe_and_email(
         {"quantity": 2},
     )
 
-    mocked_email = mocker.patch(
-        "catalog.views.send_mail",
-        return_value=1,
+    mocked_email_task = mocker.patch(
+        "catalog.views.send_order_confirmation_email.delay",
     )
 
     mocked_stripe = mocker.patch(
@@ -300,7 +300,7 @@ def test_user_can_create_order_with_mocked_stripe_and_email(
     assert order_item.quantity == 2
     assert order_item.price == book.price
 
-    mocked_email.assert_called_once()
+    mocked_email_task.assert_called_once_with(order.id)
     mocked_stripe.assert_called_once()
 
 def test_cart_is_cleared_after_order_creation(
@@ -321,9 +321,8 @@ def test_cart_is_cleared_after_order_creation(
         {"quantity": 1},
     )
 
-    mocker.patch(
-        "catalog.views.send_mail",
-        return_value=1,
+    mocked_email_task = mocker.patch(
+        "catalog.views.send_order_confirmation_email.delay",
     )
 
     mocker.patch(

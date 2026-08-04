@@ -14,6 +14,9 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 from django.utils.translation import gettext_lazy as _
+from celery.schedules import crontab
+from datetime import timedelta
+import sentry_sdk
 
 load_dotenv()
 
@@ -30,12 +33,15 @@ SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-key")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS",
+    "localhost,127.0.0.1",
+).split(",")
 
 # Application definition
 
 INSTALLED_APPS = [
-    'catalog',
+    "catalog.apps.CatalogConfig",
     "accounts",
     'django.contrib.admin',
     'django.contrib.auth',
@@ -228,3 +234,63 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "REST API for the Bookstore project",
     "VERSION": "1.0.0",
 }
+
+REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379")
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": f"{REDIS_URL}/1",
+        "OPTIONS": {
+            "db": "1",
+        },
+        "KEY_PREFIX": "bookstore",
+        "TIMEOUT": 300,
+    }
+}
+
+BOOK_LIST_CACHE_TIMEOUT = 60
+BOOK_DETAIL_CACHE_TIMEOUT = 300
+
+CELERY_BROKER_URL = os.getenv(
+    "CELERY_BROKER_URL",
+    "redis://redis:6379/0",
+)
+
+CELERY_RESULT_BACKEND = os.getenv(
+    "CELERY_RESULT_BACKEND",
+    "redis://redis:6379/2",
+)
+
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+
+CELERY_TIMEZONE = TIME_ZONE
+
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+CELERY_BEAT_SCHEDULE = {
+    "generate-orders-report": {
+        "task": "catalog.tasks.generate_orders_report",
+        "schedule": timedelta(minutes=1),
+    },
+    "clear-expired-sessions": {
+        "task": "catalog.tasks.clear_expired_sessions",
+        "schedule": timedelta(minutes=2),
+    },
+}
+
+SENTRY_DSN = os.getenv("SENTRY_DSN", "")
+
+if SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        environment=os.getenv(
+            "SENTRY_ENVIRONMENT",
+            "development",
+        ),
+        send_default_pii=False,
+        traces_sample_rate=0.1,
+    )
