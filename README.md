@@ -1,5 +1,25 @@
 # Книжковий магазин
 
+# Bookstore
+
+![Django CI/CD](https://github.com/OleksandrByhkov/python_homework/actions/workflows/django.yml/badge.svg)
+![Coverage](https://img.shields.io/badge/coverage-94%25-brightgreen)
+![Python](https://img.shields.io/badge/python-3.12-blue)
+![Django](https://img.shields.io/badge/Django-6.0.6-green)
+![Docker](https://img.shields.io/badge/docker-enabled-blue)
+![Render](https://img.shields.io/badge/deployed-Render-purple)
+
+## Production
+
+The project is deployed on Render with PostgreSQL and Redis.
+
+- Django + Gunicorn
+- PostgreSQL
+- Redis
+- Docker
+- GitHub Actions CI/CD
+- Health check: `/health/`
+
 Навчальний Django-проєкт онлайн-магазину книг, створений у рамках курсу Python.
 
 Проєкт дозволяє користувачам переглядати книги, виконувати пошук та фільтрацію, додавати товари до кошика, створювати замовлення та переходити до оплати через Stripe.
