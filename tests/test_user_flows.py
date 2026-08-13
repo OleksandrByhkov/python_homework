@@ -1,12 +1,10 @@
-from types import SimpleNamespace
-
 import pytest
 from django.urls import reverse
 
 from catalog.models import Order, OrderItem
 from tests.factories import BookFactory, CategoryFactory
 from decimal import Decimal
-
+from types import SimpleNamespace
 
 pytestmark = pytest.mark.django_db
 
@@ -16,10 +14,9 @@ def test_user_can_open_book_list(client):
 
     assert response.status_code == 200
     assert "catalog/book_list.html" in [
-        template.name
-        for template in response.templates
-        if template.name
+        template.name for template in response.templates if template.name
     ]
+
 
 def test_user_can_search_book_by_title(client):
     required_book = BookFactory(title="Python для початківців")
@@ -35,6 +32,7 @@ def test_user_can_search_book_by_title(client):
     assert response.status_code == 200
     assert required_book.title in content
     assert other_book.title not in content
+
 
 def test_user_can_search_book_by_author(client):
     required_book = BookFactory(
@@ -56,6 +54,7 @@ def test_user_can_search_book_by_author(client):
     assert response.status_code == 200
     assert required_book.title in content
     assert other_book.title not in content
+
 
 def test_user_can_filter_books_by_category(client):
     programming = CategoryFactory(name="Програмування")
@@ -81,6 +80,7 @@ def test_user_can_filter_books_by_category(client):
     assert programming_book.title in content
     assert fiction_book.title not in content
 
+
 def test_user_can_filter_available_books(client):
     available_book = BookFactory(
         title="Книга в наявності",
@@ -102,6 +102,7 @@ def test_user_can_filter_available_books(client):
     assert available_book.title in content
     assert unavailable_book.title not in content
 
+
 def test_user_can_open_book_detail(client):
     book = BookFactory(
         title="Архітектура Django",
@@ -121,6 +122,7 @@ def test_user_can_open_book_detail(client):
     assert book.title in content
     assert book.author in content
 
+
 def test_user_can_log_in(client, django_user_model):
     user = django_user_model.objects.create_user(
         username="testuser",
@@ -139,6 +141,7 @@ def test_user_can_log_in(client, django_user_model):
     assert response.status_code == 302
     assert str(user.pk) == client.session.get("_auth_user_id")
 
+
 def test_user_can_log_out(client, django_user_model):
     user = django_user_model.objects.create_user(
         username="logoutuser",
@@ -153,11 +156,13 @@ def test_user_can_log_out(client, django_user_model):
     assert response.status_code == 302
     assert "_auth_user_id" not in client.session
 
+
 def test_anonymous_user_is_redirected_from_book_create(client):
     response = client.get(reverse("catalog:book_create"))
 
     assert response.status_code == 302
     assert reverse("accounts:login") in response.url
+
 
 def test_user_can_add_book_to_cart(client):
     book = BookFactory(
@@ -179,6 +184,7 @@ def test_user_can_add_book_to_cart(client):
 
     assert response.status_code == 200
     assert book.title in content
+
 
 def test_user_can_remove_book_from_cart(client):
     book = BookFactory(
@@ -208,11 +214,13 @@ def test_user_can_remove_book_from_cart(client):
     assert response.status_code == 200
     assert book.title not in content
 
+
 def test_empty_cart_redirects_from_order_create(client):
     response = client.get(reverse("catalog:order_create"))
 
     assert response.status_code == 302
     assert response.url == reverse("catalog:book_list")
+
 
 def test_user_can_open_order_form_with_cart_item(client):
     book = BookFactory(
@@ -233,11 +241,10 @@ def test_user_can_open_order_form_with_cart_item(client):
 
     assert response.status_code == 200
     assert "catalog/order_create.html" in [
-        template.name
-        for template in response.templates
-        if template.name
+        template.name for template in response.templates if template.name
     ]
     assert book.title in response.content.decode("utf-8")
+
 
 @pytest.mark.django_db(transaction=True)
 def test_user_can_create_order_with_mocked_stripe_and_email(
@@ -303,6 +310,7 @@ def test_user_can_create_order_with_mocked_stripe_and_email(
     mocked_email_task.assert_called_once_with(order.id)
     mocked_stripe.assert_called_once()
 
+
 def test_cart_is_cleared_after_order_creation(
     client,
     mocker,
@@ -321,7 +329,7 @@ def test_cart_is_cleared_after_order_creation(
         {"quantity": 1},
     )
 
-    mocked_email_task = mocker.patch(
+    mocker.patch(
         "catalog.views.send_order_confirmation_email.delay",
     )
 
@@ -352,24 +360,16 @@ def test_cart_is_cleared_after_order_creation(
 
 
 def test_user_can_open_payment_result_pages(client):
-    success_response = client.get(
-        reverse("catalog:payment_success")
-    )
-    cancel_response = client.get(
-        reverse("catalog:payment_cancel")
-    )
+    success_response = client.get(reverse("catalog:payment_success"))
+    cancel_response = client.get(reverse("catalog:payment_cancel"))
 
     assert success_response.status_code == 200
     assert cancel_response.status_code == 200
 
     assert "catalog/payment_success.html" in [
-        template.name
-        for template in success_response.templates
-        if template.name
+        template.name for template in success_response.templates if template.name
     ]
 
     assert "catalog/payment_cancel.html" in [
-        template.name
-        for template in cancel_response.templates
-        if template.name
+        template.name for template in cancel_response.templates if template.name
     ]

@@ -19,6 +19,7 @@ class RegisterForm(UserCreationForm):
             "password2",
         ]
 
+
 class BookForm(forms.ModelForm):
     class Meta:
         model = Book

@@ -2,7 +2,6 @@ from decimal import Decimal
 
 import factory
 
-from catalog.models import Book, Category
 from catalog.models import Book, Category, Order, OrderItem
 
 
@@ -25,15 +24,14 @@ class BookFactory(factory.django.DjangoModelFactory):
     stock = 10
     category = factory.SubFactory(CategoryFactory)
 
+
 class OrderFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Order
 
     first_name = "Іван"
     last_name = "Петренко"
-    email = factory.Sequence(
-        lambda number: f"customer{number}@example.com"
-    )
+    email = factory.Sequence(lambda number: f"customer{number}@example.com")
     address = "Київ, Хрещатик 1"
 
 

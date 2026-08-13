@@ -1,22 +1,21 @@
 from django.urls import path
+
 from .views import (
-    BookListView,
-    BookDetailView,
-    BookCreateView,
-    BookUpdateView,
-    BookDeleteView,
-    AsyncBookListView,
     AsyncBookDetailView,
+    AsyncBookListView,
     AsyncBookStatsView,
+    BookCreateView,
+    BookDeleteView,
+    BookDetailView,
+    BookListView,
+    BookUpdateView,
     cart_add,
-    cart_remove,
     cart_detail,
+    cart_remove,
     order_create,
-    payment_success,
     payment_cancel,
+    payment_success,
 )
-from .views import cart_add, cart_remove, cart_detail
-from .views import order_create, payment_success, payment_cancel
 
 app_name = "catalog"
 
@@ -48,4 +47,3 @@ urlpatterns = [
         name="async_book_stats",
     ),
 ]
-

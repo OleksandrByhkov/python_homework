@@ -1,5 +1,3 @@
-from django.shortcuts import render
-
 # Create your views here.
 
 from rest_framework import status, viewsets
@@ -111,9 +109,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return Order.objects.none()
-        queryset = Order.objects.prefetch_related(
-            "items__book__category"
-        )
+        queryset = Order.objects.prefetch_related("items__book__category")
 
         if self.request.user.is_staff:
             return queryset

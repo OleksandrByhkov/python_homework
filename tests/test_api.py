@@ -5,7 +5,6 @@ from rest_framework.test import APIClient
 from catalog.models import Book, Category, Order
 from tests.factories import BookFactory, CategoryFactory
 
-
 pytestmark = pytest.mark.django_db
 
 
@@ -81,9 +80,7 @@ def test_anonymous_user_cannot_list_books(api_client):
 def test_authenticated_user_can_list_books(authenticated_client):
     BookFactory.create_batch(3)
 
-    response = authenticated_client.get(
-        reverse("api:book-list")
-    )
+    response = authenticated_client.get(reverse("api:book-list"))
 
     assert response.status_code == 200
     assert response.data["count"] == 3
@@ -142,9 +139,7 @@ def test_admin_can_create_book(admin_client):
     )
 
     assert response.status_code == 201
-    assert Book.objects.filter(
-        title="REST API Book"
-    ).exists()
+    assert Book.objects.filter(title="REST API Book").exists()
 
 
 def test_admin_can_update_book(admin_client):
@@ -203,12 +198,11 @@ def test_book_response_contains_nested_category(
     assert response.data["category"]["id"] == category.id
     assert response.data["category"]["name"] == "Programming"
 
+
 def test_authenticated_user_can_list_categories(authenticated_client):
     CategoryFactory.create_batch(3)
 
-    response = authenticated_client.get(
-        reverse("api:category-list")
-    )
+    response = authenticated_client.get(reverse("api:category-list"))
 
     assert response.status_code == 200
     assert response.data["count"] == 3
@@ -238,9 +232,7 @@ def test_admin_can_create_category(admin_client):
     )
 
     assert response.status_code == 201
-    assert Category.objects.filter(
-        slug="programming-api"
-    ).exists()
+    assert Category.objects.filter(slug="programming-api").exists()
 
 
 def test_admin_can_update_category(admin_client):
@@ -338,9 +330,7 @@ def test_book_ordering_by_price(authenticated_client):
 def test_book_pagination_is_20_items(authenticated_client):
     BookFactory.create_batch(25)
 
-    response = authenticated_client.get(
-        reverse("api:book-list")
-    )
+    response = authenticated_client.get(reverse("api:book-list"))
 
     assert response.status_code == 200
     assert response.data["count"] == 25
@@ -348,9 +338,7 @@ def test_book_pagination_is_20_items(authenticated_client):
 
 
 def test_authenticated_user_can_view_empty_cart(authenticated_client):
-    response = authenticated_client.get(
-        reverse("api:cart-list")
-    )
+    response = authenticated_client.get(reverse("api:cart-list"))
 
     assert response.status_code == 200
     assert response.data["items"] == []
@@ -383,9 +371,7 @@ def test_cart_contains_added_book(authenticated_client):
         format="json",
     )
 
-    response = authenticated_client.get(
-        reverse("api:cart-list")
-    )
+    response = authenticated_client.get(reverse("api:cart-list"))
 
     assert response.status_code == 200
     assert len(response.data["items"]) == 1
@@ -455,9 +441,7 @@ def test_user_can_remove_book_from_cart(authenticated_client):
 
     assert response.status_code == 200
 
-    cart_response = authenticated_client.get(
-        reverse("api:cart-list")
-    )
+    cart_response = authenticated_client.get(reverse("api:cart-list"))
 
     assert cart_response.data["items"] == []
 
@@ -491,11 +475,10 @@ def test_user_can_clear_cart(authenticated_client):
 
     assert response.status_code == 200
 
-    cart_response = authenticated_client.get(
-        reverse("api:cart-list")
-    )
+    cart_response = authenticated_client.get(reverse("api:cart-list"))
 
     assert cart_response.data["items"] == []
+
 
 def test_authenticated_user_can_create_order(authenticated_client, user):
     response = authenticated_client.post(
@@ -543,9 +526,7 @@ def test_user_can_list_only_own_orders(
         address="Львів",
     )
 
-    response = authenticated_client.get(
-        reverse("api:order-list")
-    )
+    response = authenticated_client.get(reverse("api:order-list"))
 
     assert response.status_code == 200
     assert response.data["count"] == 1
@@ -688,9 +669,7 @@ def test_admin_can_list_all_orders(
         address="Львів",
     )
 
-    response = admin_client.get(
-        reverse("api:order-list")
-    )
+    response = admin_client.get(reverse("api:order-list"))
 
     assert response.status_code == 200
     assert response.data["count"] == 2

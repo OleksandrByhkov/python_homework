@@ -4,8 +4,6 @@ from django.urls import reverse
 
 from tests.factories import BookFactory
 
-
-
 pytestmark = pytest.mark.django_db
 
 
@@ -16,25 +14,26 @@ def test_book_list_view_returns_status_200(client):
 
     assert response.status_code == 200
 
+
 def test_book_list_view_uses_correct_template(client):
     url = reverse("catalog:book_list")
 
     response = client.get(url)
 
     assert "catalog/book_list.html" in [
-        template.name
-        for template in response.templates
-        if template.name
+        template.name for template in response.templates if template.name
     ]
 
-def test_book_list_view_contains_book(client):
-    book = BookFactory(title="Python для всіх")
-    url = reverse("catalog:book_list")
 
+def test_book_list_view_contains_book(client):
+    BookFactory(title="Python для всіх")
+
+    url = reverse("catalog:book_list")
     response = client.get(url)
 
     assert response.status_code == 200
     assert "Python для всіх" in response.content.decode("utf-8")
+
 
 def test_book_detail_view_returns_status_200(client):
     book = BookFactory()
@@ -43,6 +42,7 @@ def test_book_detail_view_returns_status_200(client):
     response = client.get(url)
 
     assert response.status_code == 200
+
 
 def test_book_detail_view_contains_book_title(client):
     book = BookFactory(title="Вивчаємо Django")
@@ -53,12 +53,14 @@ def test_book_detail_view_contains_book_title(client):
     assert response.status_code == 200
     assert "Вивчаємо Django" in response.content.decode("utf-8")
 
+
 def test_book_detail_view_returns_404_for_unknown_book(client):
     url = reverse("catalog:book_detail", kwargs={"pk": 999999})
 
     response = client.get(url)
 
     assert response.status_code == 404
+
 
 @pytest.fixture(autouse=True)
 def clear_cache():

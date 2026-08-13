@@ -42,19 +42,13 @@ def generate_orders_report():
     Generate a CSV report containing all orders.
     """
 
-    reports_directory = (
-        Path(settings.BASE_DIR)
-        / "reports"
-    )
+    reports_directory = Path(settings.BASE_DIR) / "reports"
     reports_directory.mkdir(
         parents=True,
         exist_ok=True,
     )
 
-    filename = (
-        reports_directory
-        / f"orders_{timezone.now():%Y-%m-%d_%H-%M-%S}.csv"
-    )
+    filename = reports_directory / f"orders_{timezone.now():%Y-%m-%d_%H-%M-%S}.csv"
 
     orders = Order.objects.select_related("user").all()
 
@@ -65,26 +59,30 @@ def generate_orders_report():
     ) as report_file:
         writer = csv.writer(report_file)
 
-        writer.writerow([
-            "ID",
-            "User",
-            "Email",
-            "Status",
-            "Paid",
-            "Created at",
-            "Total cost",
-        ])
+        writer.writerow(
+            [
+                "ID",
+                "User",
+                "Email",
+                "Status",
+                "Paid",
+                "Created at",
+                "Total cost",
+            ]
+        )
 
         for order in orders:
-            writer.writerow([
-                order.id,
-                order.user.username if order.user else "",
-                order.email,
-                order.status,
-                order.paid,
-                order.created_at,
-                order.get_total_cost(),
-            ])
+            writer.writerow(
+                [
+                    order.id,
+                    order.user.username if order.user else "",
+                    order.email,
+                    order.status,
+                    order.paid,
+                    order.created_at,
+                    order.get_total_cost(),
+                ]
+            )
 
     return str(filename)
 

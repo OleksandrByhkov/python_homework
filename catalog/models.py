@@ -1,6 +1,6 @@
 from django.db import models
-from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+
 
 class Category(models.Model):
     name = models.CharField(max_length=200)
@@ -11,6 +11,7 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Book(models.Model):
     title = models.CharField(_("Title"), max_length=200)
@@ -38,6 +39,7 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
+
 class Order(models.Model):
     STATUS_CHOICES = [
         ("created", "Created"),
@@ -50,7 +52,7 @@ class Order(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="orders"
+        related_name="orders",
     )
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -58,11 +60,7 @@ class Order(models.Model):
     address = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     paid = models.BooleanField(default=False)
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default="created"
-    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="created")
     stripe_session_id = models.CharField(max_length=255, blank=True)
 
     class Meta:
@@ -76,16 +74,8 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(
-        Order,
-        on_delete=models.CASCADE,
-        related_name="items"
-    )
-    book = models.ForeignKey(
-        Book,
-        on_delete=models.CASCADE,
-        related_name="order_items"
-    )
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="order_items")
     price = models.DecimalField(max_digits=8, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
 

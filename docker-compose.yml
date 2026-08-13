@@ -10,6 +10,8 @@ services:
       - "8000"
     env_file:
       - .env
+    environment:
+      DJANGO_SETTINGS_MODULE: bookstore.settings.production
     depends_on:
       db:
         condition: service_healthy
@@ -29,6 +31,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    environment:
+      DJANGO_SETTINGS_MODULE: bookstore.settings.production
 
   celery-beat:
     build: .
@@ -43,6 +47,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    environment:
+      DJANGO_SETTINGS_MODULE: bookstore.settings.production
 
   nginx:
     image: nginx:1.29-alpine

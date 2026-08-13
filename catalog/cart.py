@@ -16,10 +16,7 @@ class Cart:
         book_id = str(book.id)
 
         if book_id not in self.cart:
-            self.cart[book_id] = {
-                "quantity": 0,
-                "price": str(book.price)
-            }
+            self.cart[book_id] = {"quantity": 0, "price": str(book.price)}
 
         self.cart[book_id]["quantity"] += quantity
         self.save()
@@ -57,6 +54,5 @@ class Cart:
 
     def get_total_price(self):
         return sum(
-            Decimal(item["price"]) * item["quantity"]
-            for item in self.cart.values()
+            Decimal(item["price"]) * item["quantity"] for item in self.cart.values()
         )

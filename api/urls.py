@@ -17,7 +17,6 @@ from .views import (
     CartViewSet,
 )
 
-
 router = DefaultRouter()
 router.register("books", BookViewSet, basename="book")
 router.register("categories", CategoryViewSet, basename="category")
@@ -27,7 +26,6 @@ router.register("cart", CartViewSet, basename="cart")
 
 urlpatterns = [
     path("", include(router.urls)),
-
     path(
         "token/",
         TokenObtainPairView.as_view(),
@@ -43,7 +41,6 @@ urlpatterns = [
         TokenVerifyView.as_view(),
         name="token_verify",
     ),
-
     path(
         "schema/",
         SpectacularAPIView.as_view(),

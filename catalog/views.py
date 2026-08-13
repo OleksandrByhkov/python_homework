@@ -1,6 +1,12 @@
 from django.db.models import Q
 from django.urls import reverse_lazy
-from django.views.generic import (ListView, DetailView, CreateView, UpdateView, DeleteView)
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 from .models import Book, Category
@@ -25,12 +31,14 @@ from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 from django.http import Http404
 
+
 @method_decorator(
     cache_page(settings.BOOK_LIST_CACHE_TIMEOUT),
     name="dispatch",
 )
 class BookListView(ListView):
     """Display a paginated list of books with search and filtering."""
+
     model = Book
     template_name = "catalog/book_list.html"
     context_object_name = "books"
@@ -84,11 +92,7 @@ class BookDetailView(DetailView):
 
         if book is None:
             try:
-                book = (
-                    Book.objects
-                    .select_related("category")
-                    .get(pk=book_id)
-                )
+                book = Book.objects.select_related("category").get(pk=book_id)
             except Book.DoesNotExist as exc:
                 raise Http404("Book not found") from exc
 
@@ -103,6 +107,7 @@ class BookDetailView(DetailView):
 
 class BookCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     """Allow authorized users to create a new book."""
+
     model = Book
     template_name = "catalog/book_form.html"
     fields = ["category", "title", "author", "price", "description", "stock"]
@@ -112,6 +117,7 @@ class BookCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
 class BookUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     """Allow authorized users to update an existing book."""
+
     model = Book
     template_name = "catalog/book_form.html"
     fields = ["category", "title", "author", "price", "description", "stock"]
@@ -121,10 +127,12 @@ class BookUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
 
 class BookDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     """Allow authorized users to delete an existing book."""
+
     model = Book
     template_name = "catalog/book_confirm_delete.html"
     success_url = reverse_lazy("catalog:book_list")
     permission_required = "catalog.can_manage_books"
+
 
 @require_POST
 def cart_add(request, book_id):
@@ -154,9 +162,8 @@ def cart_detail(request):
     """Display the contents of the current shopping cart."""
     cart = Cart(request)
 
-    return render(request, "catalog/cart_detail.html", {
-        "cart": cart
-    })
+    return render(request, "catalog/cart_detail.html", {"cart": cart})
+
 
 def order_create(request):
     """
@@ -258,8 +265,10 @@ def payment_cancel(request):
     """Display the cancelled payment page."""
     return render(request, "catalog/payment_cancel.html")
 
+
 class AsyncBookListView(View):
     """Asynchronously retrieve and display all books."""
+
     async def get(self, request):
         books = []
 
@@ -275,6 +284,7 @@ class AsyncBookListView(View):
 
 class AsyncBookDetailView(View):
     """Display book details using an asynchronous database query."""
+
     async def get(self, request, pk):
         try:
             book = await Book.objects.select_related("category").aget(pk=pk)
@@ -290,11 +300,14 @@ class AsyncBookDetailView(View):
 
 class AsyncBookStatsView(View):
     """Return asynchronous book and category statistics as JSON."""
+
     async def get(self, request):
         books_count = await Book.objects.acount()
         categories_count = await Category.objects.acount()
 
-        return JsonResponse({
-            "books_count": books_count,
-            "categories_count": categories_count,
-        })
+        return JsonResponse(
+            {
+                "books_count": books_count,
+                "categories_count": categories_count,
+            }
+        )

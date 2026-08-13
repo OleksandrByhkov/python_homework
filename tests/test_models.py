@@ -11,7 +11,6 @@ from tests.factories import (
     OrderItemFactory,
 )
 
-
 pytestmark = pytest.mark.django_db
 
 
@@ -68,6 +67,7 @@ def test_book_belongs_to_category():
 
     assert book.category == category
     assert book in category.books.all()
+
 
 def test_order_is_created():
     # Generated with AI, reviewed and modified

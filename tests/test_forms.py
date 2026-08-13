@@ -5,7 +5,6 @@ import pytest
 from catalog.forms import BookForm
 from tests.factories import CategoryFactory
 
-
 pytestmark = pytest.mark.django_db
 
 
