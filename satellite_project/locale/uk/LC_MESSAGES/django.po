@@ -1,0 +1,22 @@
+msgid ""
+msgstr ""
+"Language: uk\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Book ID"
+msgstr "ID книги"
+
+msgid "Title"
+msgstr "Назва"
+
+msgid "Pending"
+msgstr "Очікує"
+
+msgid "Confirmed"
+msgstr "Підтверджено"
+
+msgid "Cancelled"
+msgstr "Скасовано"
+
+msgid "Expired"
+msgstr "Термін минув"

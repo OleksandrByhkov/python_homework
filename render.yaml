@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: bookstore
+    runtime: docker
+    dockerContext: ./main_app
+    dockerfilePath: ./main_app/Dockerfile
+    healthCheckPath: /health/
+  - type: web
+    name: bookstore-warehouse
+    runtime: docker
+    dockerContext: ./satellite_project
+    dockerfilePath: ./satellite_project/Dockerfile
+    healthCheckPath: /health/
+  - type: worker
+    name: warehouse-worker
+    runtime: docker
+    dockerContext: ./satellite_project
+    dockerfilePath: ./satellite_project/Dockerfile
+    dockerCommand: celery -A warehouse worker -l info

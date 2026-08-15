@@ -1,0 +1,22 @@
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Book ID"
+msgstr "Book ID"
+
+msgid "Title"
+msgstr "Title"
+
+msgid "Pending"
+msgstr "Pending"
+
+msgid "Confirmed"
+msgstr "Confirmed"
+
+msgid "Cancelled"
+msgstr "Cancelled"
+
+msgid "Expired"
+msgstr "Expired"

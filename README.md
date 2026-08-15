@@ -1,320 +1,149 @@
-# Книжковий магазин
+# Bookstore + Warehouse final project
 
-# Bookstore
+Two independent Django services communicate through a REST API:
 
-![Django CI/CD](https://github.com/OleksandrByhkov/python_homework/actions/workflows/django.yml/badge.svg)
-![Coverage](https://img.shields.io/badge/coverage-94%25-brightgreen)
-![Python](https://img.shields.io/badge/python-3.12-blue)
-![Django](https://img.shields.io/badge/Django-6.0.6-green)
-![Docker](https://img.shields.io/badge/docker-enabled-blue)
-![Render](https://img.shields.io/badge/deployed-Render-purple)
+- **ProjectA (`main_app`)** — bookstore, cart, checkout, accounts and public API.
+- **ProjectB (`satellite_project`)** — warehouse stock, movements and order reservations.
 
-## Production
+## Architecture
 
-The project is deployed on Render with PostgreSQL and Redis.
-
-- Django + Gunicorn
-- PostgreSQL
-- Redis
-- Docker
-- GitHub Actions CI/CD
-- Health check: `/health/`
-
-Навчальний Django-проєкт онлайн-магазину книг, створений у рамках курсу Python.
-
-Проєкт дозволяє користувачам переглядати книги, виконувати пошук та фільтрацію, додавати товари до кошика, створювати замовлення та переходити до оплати через Stripe.
-
----
-
-## Основні можливості
-
-- Перегляд списку книг
-- Перегляд детальної інформації про книгу
-- Пошук книг за назвою, автором та описом
-- Фільтрація книг за категорією
-- Фільтрація книг за наявністю
-- Пагінація списку книг
-- Реєстрація користувачів
-- Авторизація та вихід з облікового запису
-- Створення, редагування та видалення книг з перевіркою permissions
-- Кошик на основі Django sessions
-- Додавання та видалення книг з кошика
-- Створення замовлення
-- Інтеграція зі Stripe Checkout
-- Відправлення email після створення замовлення
-- Async views з використанням Django async ORM
-- Інтернаціоналізація українською та англійською мовами
-- Автоматичні тести з pytest-django
-- Factory Boy для створення тестових даних
-- Mock зовнішніх сервісів Stripe та email
-
----
-
-## Технології
-
-Проєкт використовує:
-
-- Python
-- Django
-- PostgreSQL
-- Docker / Docker Compose
-- Stripe
-- pytest
-- pytest-django
-- pytest-cov
-- pytest-mock
-- Factory Boy
-- HTML
-- CSS
-- Bootstrap
-- Git / GitHub
-
----
-
-## Структура проєкту
-
-```text
-python_homework-main/
-│
-├── accounts/
-│   ├── models.py
-│   ├── forms.py
-│   ├── views.py
-│   └── urls.py
-│
-├── bookstore/
-│   ├── settings.py
-│   ├── test_settings.py
-│   ├── urls.py
-│   ├── asgi.py
-│   └── wsgi.py
-│
-├── catalog/
-│   ├── models.py
-│   ├── forms.py
-│   ├── views.py
-│   ├── urls.py
-│   ├── cart.py
-│   ├── middleware.py
-│   ├── templates/
-│   └── static/
-│
-├── locale/
-│   ├── en/
-│   └── uk/
-│
-├── tests/
-│   ├── factories.py
-│   ├── test_forms.py
-│   ├── test_models.py
-│   ├── test_user_flows.py
-│   └── test_views.py
-│
-├── AI_REVIEW.md
-├── AI_PROMPTS.md
-├── README.md
-├── Dockerfile
-├── docker-compose.yml
-├── pytest.ini
-├── requirements.txt
-└── manage.py
+```mermaid
+flowchart TB
+    Client[Browser / API client] --> NGINX
+    NGINX -->|/| A[ProjectA Bookstore]
+    NGINX -->|/warehouse/| B[ProjectB Warehouse]
+    A -->|JWT REST API| B
+    A --> DBA[(PostgreSQL A)]
+    B --> DBB[(PostgreSQL B)]
+    A --> Redis[(Redis)]
+    B --> Redis
+    Redis --> CA[Celery ProjectA]
+    Redis --> CB[Celery ProjectB + Beat]
 ```
 
----
+Both services use Django, DRF, PostgreSQL, Redis, Celery, Gunicorn and Sentry. NGINX is the public reverse proxy.
 
-## Встановлення
+## Implemented requirements
 
-### 1. Клонування репозиторію
+- Custom user models, permissions and groups.
+- Class-based API views with a shared `BaseStockView`.
+- JWT access and refresh tokens.
+- Celery task that expires stale reservations.
+- Ukrainian and English i18n configuration.
+- Redis caching of stock detail responses.
+- ProjectA → ProjectB client with timeout, HTTP/JSON error handling and logging.
+- Swagger/OpenAPI documentation.
+- Unit, API and integration tests (Warehouse coverage: **92%**).
+- Docker Compose, NGINX, Gunicorn, CI pipeline and optional Sentry configuration.
+
+## Quick start
+
+Requirements: Docker Desktop with Docker Compose.
 
 ```bash
-git clone https://github.com/OleksandrByhkov/python_homework.git
-cd python_homework
+cp .env.example .env
+docker compose up --build
 ```
 
-### 2. Створення virtual environment
+On Windows PowerShell:
 
-Windows:
+```powershell
+Copy-Item .env.example .env
+docker compose up --build
+```
+
+Endpoints:
+
+| Endpoint | Description |
+|---|---|
+| `http://localhost/` | Bookstore UI |
+| `http://localhost/health/` | ProjectA health check |
+| `http://localhost/warehouse/health/` | ProjectB health check |
+| `http://localhost/warehouse/api/docs/` | Warehouse Swagger UI |
+| `http://localhost/warehouse/api/schema/` | Warehouse OpenAPI schema |
+
+Create a Warehouse administrator:
 
 ```bash
+docker compose exec warehouse python manage.py createsuperuser
+```
+
+Obtain JWT:
+
+```bash
+curl -X POST http://localhost/warehouse/api/auth/token/ \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"your-password"}'
+```
+
+Paste the access token into Swagger **Authorize** as `Bearer <token>`.
+
+## Warehouse API
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET/POST | `/warehouse/api/stocks/` | List/create stock records |
+| GET/PUT/PATCH | `/warehouse/api/stocks/{book_id}/` | Stock details/update |
+| POST | `/warehouse/api/stocks/{book_id}/adjust/` | Audited stock adjustment |
+| GET/POST | `/warehouse/api/reservations/` | List/create reservations |
+| POST | `/warehouse/api/reservations/{id}/confirm/` | Confirm and subtract stock |
+| POST | `/warehouse/api/reservations/{id}/cancel/` | Release reserved stock |
+
+Groups are created automatically after migrations:
+
+- `Warehouse Managers`: stock and reservation management.
+- `Warehouse Operators`: reservation operations.
+
+Assign users to groups in `/warehouse/admin/`.
+
+## Interservice communication
+
+ProjectA contains `main_app/integrations/warehouse_client.py`. Configure:
+
+```env
+WAREHOUSE_API_URL=http://warehouse:8001/api
+WAREHOUSE_SERVICE_TOKEN=<JWT access token for service user>
+```
+
+`WarehouseClient` supports stock lookup, reserve, confirm and cancel. Network timeouts, connection failures, HTTP errors and malformed JSON are logged and converted to `WarehouseError` instead of crashing ProjectA.
+
+## Tests
+
+Warehouse tests:
+
+```bash
+cd satellite_project
 python -m venv .venv
+.venv/bin/pip install -r requirements.txt
+USE_REDIS=False .venv/bin/pytest
 ```
 
-Активація:
+PowerShell:
+
+```powershell
+cd satellite_project
+python -m venv .venv
+.venv\Scripts\pip install -r requirements.txt
+$env:USE_REDIS="False"
+.venv\Scripts\pytest
+```
+
+The test command enforces coverage of at least 70% through `pytest.ini`.
+
+## Production and Sentry
+
+Set secure environment values on the deployment platform:
+
+- `SECRET_KEY`, `DEBUG=False`, `ALLOWED_HOSTS`;
+- PostgreSQL credentials for each service;
+- `REDIS_URL`, `CELERY_BROKER_URL`, `CELERY_RESULT_BACKEND`;
+- `WAREHOUSE_SERVICE_TOKEN`;
+- `SENTRY_DSN` and `SENTRY_ENVIRONMENT=production`.
+
+Deploy both databases, Redis, both web services and both workers. Run Warehouse Beat as a separate process:
 
 ```bash
-.venv\Scripts\activate
+celery -A warehouse beat -l info
 ```
 
-### 3. Встановлення залежностей
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Міграції
-
-```bash
-python manage.py migrate
-```
-
-### 5. Запуск сервера
-
-```bash
-python manage.py runserver
-```
-
-Після запуску сайт буде доступний через локальний Django development server.
-
----
-
-## Інтернаціоналізація
-
-Проєкт підтримує дві мови:
-
-- українську;
-- англійську.
-
-Переклади зберігаються у директорії:
-
-```text
-locale/
-```
-
-Проєкт використовує Django internationalization та файли `.po` і `.mo`.
-
-Для компіляції перекладів:
-
-```bash
-python manage.py compilemessages
-```
-
----
-
-## Async Views
-
-У проєкті реалізовані асинхронні views з використанням Django async ORM:
-
-```text
-AsyncBookListView
-AsyncBookDetailView
-AsyncBookStatsView
-```
-
-Використовуються асинхронні ORM-операції, зокрема:
-
-```python
-aget()
-acount()
-```
-
-та асинхронна ітерація QuerySet.
-
----
-
-## Тестування
-
-Для тестування використовується `pytest` та `pytest-django`.
-
-Запуск усіх тестів:
-
-```bash
-pytest
-```
-
-На поточному етапі проєкт містить:
-
-```text
-43 passed
-```
-
-Тести охоплюють:
-
-- models;
-- forms;
-- views;
-- user flows;
-- shopping cart;
-- orders;
-- Stripe integration;
-- email.
-
-Для тестових даних використовується Factory Boy.
-
-Stripe та email тестуються з використанням mock, тому реальні зовнішні запити під час тестів не виконуються.
-
----
-
-## Coverage
-
-Для перевірки coverage:
-
-```bash
-pytest --cov
-```
-
-Coverage моделей:
-
-```text
-catalog/models.py    100%
-```
-
-Загальний coverage проєкту:
-
-```text
-TOTAL    92%
-```
-
-Таким чином, вимога coverage ≥ 60% виконана.
-
----
-
-## AI Usage
-
-Під час розробки проєкту використовувався ChatGPT як допоміжний AI-інструмент.
-
-AI використовувався для:
-
-- code review складних Django views;
-- пошуку можливих оптимізацій коду;
-- аналізу роботи з Django ORM;
-- аналізу використання database transactions;
-- генерації додаткових тестів для моделей;
-- створення docstrings;
-- покращення документації проєкту.
-
-Для code review були обрані:
-
-1. `BookListView`
-2. `order_create`
-3. `AsyncBookDetailView`
-
-AI запропонував оптимізації, серед яких:
-
-- оптимізація QuerySet;
-- покращення обробки пошукових параметрів;
-- оптимізація створення `OrderItem`;
-- винесення зовнішніх Stripe та email операцій за межі database transaction;
-- покращення обробки HTTP 404 в async view;
-- додавання docstrings.
-
-Усі AI-рекомендації були перевірені вручну перед застосуванням.
-
-Повний процес code review знаходиться у:
-
-```text
-AI_REVIEW.md
-```
-
-Промпти, які використовувалися під час роботи з AI, знаходяться у:
-
-```text
-AI_PROMPTS.md
-```
-
----
-
-## Автор
-
-Oleksandr Byhkov
-
-Навчальний проєкт "Книжковий магазин".
+The included GitHub Actions workflow runs both test suites, validates coverage and builds the Docker Compose services.
