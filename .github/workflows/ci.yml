@@ -18,5 +18,12 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v4
-      - run: docker compose config
-      - run: docker compose build
+
+      - name: Create CI environment file
+        run: cp .env.example .env
+
+      - name: Validate Docker Compose
+        run: docker compose config
+
+      - name: Build Docker images
+        run: docker compose build
